@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+<h1 class="text-center">{{ title }}</h1>
+    <hr>
+<div id="accordionOverview" class="accordion">
+    <div class="card border-info">
+        <div class="card-header" id="overviewHeader">
+            <h2 class="mb-0">
+                <button type="button" class="btn btn-link btn-block text-left" data-toggle="collapse" data-target="#overviewBody" aria-expanded="true" aria-controls="overviewBody">
+                    <h4>Overview</h4>
+                </button>
+            </h2>
+        </div>
+        <div id="overviewBody" class="collapse show" aria-labelledby="overviewBody" data-parent="#accordionOverview">
+            <div class="card-body">
+                {% if ab and ab.overview %}{{ ab.overview|safe }}{% else %}OverView Content is Empty.{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div id="accordionMtb" class="accordion">
+    <div style="height: 20px"></div>
+    <div class="card border-info">
+        <div class="card-header" id="mtbHeader">
+            <h2 class="mb-0">
+                <button type="button" class="btn btn-link btn-block text-left" data-toggle="collapse" data-target="#mtbBody" aria-expanded="true" aria-controls="mtbBody">
+                    <h4>Metabolomics</h4>
+                </button>
+            </h2>
+        </div>
+        <div id="mtbBody" class="collapse show" aria-labelledby="mtbBody" data-parent="#accordionMtb">
+            <div class="card-body">
+                {% if ab and ab.mtb %}{{ ab.mtb|safe }}{% else %}mtb Content is Empty.{% endif %}
+                {% if ab and ab.mtb_attach %}
+                    <a href="{{ ab.mtb_attach.url }}" download="Metabolomics.pdf"><button type="button" class="btn btn-info"><i class="fas fa-file-pdf"></i> Download Metabolomics Method</button></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{#<div id="accordionLpd" class="accordion">#}
+{#    <div style="height: 20px"></div>#}
+{#    <div class="card border-info">#}
+{#        <div class="card-header" id="ldpHeader">#}
+{#            <h2 class="mb-0">#}
+{#                <button type="button" class="btn btn-link btn-block text-left" data-toggle="collapse" data-target="#ldpBody" aria-expanded="true" aria-controls="ldpBody">#}
+{#                    <h4>Lipidomics</h4>#}
+{#                </button>#}
+{#            </h2>#}
+{#        </div>#}
+{#        <div id="ldpBody" class="collapse show" aria-labelledby="ldpBody" data-parent="#accordionLpd">#}
+{#            <div class="card-body">#}
+{#                {% if ab and ab.lpd %}{{ ab.lpd|safe }}{% else %}Lipidomics Content is Empty.{% endif %}#}
+{#                {% if ab and ab.lpd_attach %}#}
+{#                    <a href="{{ ab.lpd_attach.url }}" download="Lipidomics.pdf"><i class="fas fa-file-pdf"></i> Download</a>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{#    <div style="height: 20px"></div>#}
+{#<div id="accordionMal" class="accordion">#}
+{#    <div class="card border-info">#}
+{#        <div class="card-header" id="malHeader">#}
+{#            <h2 class="mb-0">#}
+{#                <button type="button" class="btn btn-link btn-block text-left" data-toggle="collapse" data-target="#malBody" aria-expanded="true" aria-controls="malBody">#}
+{#                    <h4>MALDI Imaging</h4>#}
+{#                </button>#}
+{#            </h2>#}
+{#        </div>#}
+{#        <div id="malBody" class="collapse show" aria-labelledby="malBody" data-parent="#accordionMal">#}
+{#            <div class="card-body">#}
+{#                {% if ab and ab.mal %}{{ ab.mal|safe }}{% else %}OverView Content is Empty.{% endif %}#}
+{#                {% if ab and ab.mal_attach %}#}
+{#                    <a href="{{ ab.mal_attach.url }}" download="Lipidomics.pdf"><i class="fas fa-file-pdf"></i> Download</a>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+
+    <div style="height: 20px"></div>
+<div id="accordionCite" class="accordion">
+    <div class="card border-info">
+        <div class="card-header" id="citeHeader">
+            <h2 class="mb-0">
+                <button type="button" class="btn btn-link btn-block text-left" data-toggle="collapse" data-target="#citeBody" aria-expanded="true" aria-controls="citeBody">
+                    <h4>Cite</h4>
+                </button>
+            </h2>
+        </div>
+        <div id="citeBody" class="collapse show" aria-labelledby="citeBody" data-parent="#accordionCite">
+            <div class="card-body">
+                {% if ab and ab.cite %}{{ ab.cite|safe }}{% else %}OverView Content is Empty.{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+    <div style="height: 20px"></div>
+    {% if user.is_authenticated and user.is_superuser %}
+    <a href="{% url 'chemical:about_update' %}" class="btn btn-primary"><i class="fas fa-edit"></i> Update This Page</a>
+    {% endif %}
+</div>
+{% endblock %}

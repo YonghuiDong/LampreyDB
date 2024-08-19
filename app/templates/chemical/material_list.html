@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% block style %}
+    <style>
+        .sort {
+            position: relative;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .sort:hover {
+            color: rgb(187, 78, 34);
+        }
+
+        .sort:before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #b20f0f;
+            visibility: hidden;
+            transform: scaleX(0);
+            transition: all 0.3s ease-in-out 0s;
+        }
+
+        .sort:hover:before {
+            visibility: visible;
+            transform: scaleX(1);
+        }
+    td{
+        line-break: anywhere;
+    }
+
+    </style>
+{% endblock %}
+{% block content %}
+
+<div class="container">
+<h1 class="text-center">{{ title }}</h1>
+    <hr>
+    <form action="" method="get" class="form-horizontal">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="formula">Formula </label>
+                    <input type="text" aria-label="Formula" placeholder="Search by Formula" id="formula" name="formula" value="{{ form.cleaned_data.formula }}"
+                           class="form-control">
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="mz">Exact Mass</label>
+                    <input type="number" aria-label="Formula" placeholder="Search by Exact Mass" id="mz" name="mz" step="any" value="{{ form.cleaned_data.mz }}"
+                           class="form-control">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="ion_mode">Ion Mode</label>
+                    <select name="ion_mode" id="ion_mode" class="form-control">
+                        <option value="1" {% if form.cleaned_data.ion_mode == '1' %} selected{% endif %}>Positive</option>
+                        <option value="2" {% if form.cleaned_data.ion_mode == '2' %} selected{% endif %}>Negative</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="tolerance">Tolerance(Da)</label>
+                    <input type="number" aria-label="Formula" placeholder="Tolerance" id="tolerance" name="tolerance" step="any"
+                           class="form-control" value="{% if form.cleaned_data.tolerance %}{{ form.cleaned_data.tolerance }}{% else %}0.05{% endif %}">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-warning" type="submit"><i class="fas fa-search"></i> Search</button>
+            {% if user.is_authenticated and user.is_superuser %}
+            <a href="{% url 'chemical:material_create' %}" class="btn btn-primary float-right"><i
+                    class="fas fa-plus"></i> Create</a>
+            {% endif %}
+        </div>
+    </form>
+
+    <table class="table table-hover table-striped">
+    <thead>
+    <tr class="text-center bg-info text-white">
+        <th id="sort_id" class="sort">ID</th>
+        <th id="sort_name" class="sort">Name</th>
+        <th id="sort_rt" class="sort">RT(min)</th>
+        <th>Ion Mode</th>
+        <th id="sort_mz" class="sort">m/z</th>
+        <th id="sort_adduct_ion" class="sort">Adduct Ion</th>
+        <th id="sort_formula" class="sort">Formula</th>
+        <th id="sort_ms_level" class="sort">Class</th>
+        <th>Option</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for m in ls.object_list %}
+        <tr class="text-center">
+        <td><a href="{% url 'chemical:material_view' material_id=m.id %}">{{ m.code }}</a></td>
+        <td class="text-truncate" style="max-width: 120px;"><a href="{% url 'chemical:material_view' material_id=m.id %}">{{ m.name }}</a></td>
+        <td>{{ m.rt }}</td>
+        <td>{{ m.ion_mode_verbose }}</td>
+        <td>{{ m.mz }}</td>
+        <td>{{ m.adduct_ion }}</td>
+        <td>{{ m.formula }}</td>
+        <td class="text-truncate" style="max-width: 120px;">{{ m.ms_level }}</td>
+        <td>
+            <a href="{% url 'chemical:material_view' material_id=m.id %}" class="btn btn-success"><i class="fas fa-eye"></i> Info</a>
+        </td>
+        </tr>
+
+        {% empty %}
+        <tr>
+        <td colspan="8">No Data Yet</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    {% bootstrap_pagination ls url=q_url %}
+</div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        let page;
+        let per_page;
+        let sort;
+        let order;
+        let mz;
+        let formula;
+        let ion_mode;
+        let tolerance;
+
+        document.querySelectorAll( 'th' ).forEach(
+            function ( ele ) {
+                ele.addEventListener( 'click', function ( e ) {
+                    if (e.target.id.length === 0) {
+                        return false
+                    }
+                    let name = e.target.id.slice( 5, )
+                    order = getP('order', 'asc');
+                    if (name === sort) {
+                        if (order === 'asc'){
+                            order = 'desc';
+                        } else{
+                            order = 'asc';
+                        }
+                    }
+                    page = getP('page', 1);
+                    page = parseInt(`${page}`) || 1;
+                    per_page = getP('per_page', 20);
+                    per_page = parseInt(`${per_page}`)||20;
+                    sort = name;
+                    mz = getP('mz', '');
+                    formula = getP('formula', '');
+                    ion_mode = getP('ion_mode', '');
+                    tolerance = getP('tolerance', '')
+                    window.location.assign(`${window.location.pathname}?page=${page}&per_page=${per_page}&sort=${sort}&order=${order}&mz=${mz}&formula=${formula}&ion_mode=${ion_mode}&tolerance=${tolerance}`)
+                } )
+            }
+        )
+
+        function getParameters() {
+            let theArray = ['page', 'per_page', 'sort', 'order'];
+            let defatheadt_values = ['1', '20', 'code', 'asc'];
+            let restheadts = {};
+            for (let i = 0; i <= theArray.length; i++) {
+                restheadts[theArray[i]] = getP( theArray[i], defatheadt_values[i] );
+            }
+            return restheadts
+        }
+
+        function getP( name, defatheadt_var ) {
+            let qs = new URLSearchParams( window.location.search );
+            if (qs.has( name )) {
+                return qs.get( name )
+            } else {
+                return defatheadt_var
+            }
+        }
+
+        function updateIcons(sort, order ) {
+
+            let up = ' <i class="fas fa-sort-amount-up"></i>';
+            let down = ' <i class="fas fa-sort-amount-down-alt"></i>';
+            if ($.type( order ) !== 'string') {
+                return false
+            }
+            if ($.type( sort ) !== 'string') {
+                return false
+            }
+
+            let ico;
+            if (order === 'asc') {
+                ico = down
+            } else {
+                ico = up;
+            }
+             console.log(sort, order, ico);
+            document.querySelectorAll( 'th' ).forEach(function (ele) {
+                if (ele.id.slice(5,) === sort ){
+                    console.log(ele.innerText + ico)
+                    ele.innerHTML = ele.innerHTML + ico;
+                }
+                }
+            )
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            let restheadt = getParameters();
+            sort = restheadt.sort;
+            order = restheadt.order;
+            page = restheadt.page;
+            per_page = restheadt.per_page;
+            updateIcons(restheadt.sort, restheadt.order);
+        })
+    </script>
+{% endblock %}

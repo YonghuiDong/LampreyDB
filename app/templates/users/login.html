@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="container">
+<h1 class="text-center">{{ title }}</h1>
+    <hr>
+
+<form action="" method="post" class="form">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  {% buttons %}
+    <button type="submit" class="btn btn-primary">
+      Submit
+    </button>
+  {% endbuttons %}
+</form>
+<p class="text-info">No Account? Goto <a href="{% url 'users:register' %}">Register</a> !</p>
+</div>
+{% endblock content %}

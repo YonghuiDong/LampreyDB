@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+<h1 class="text-center">{{ title }}</h1>
+    <hr>
+<div class="card">
+    <div class="body">
+        {% if ct and ct.content %}
+        {{ ct.content|safe }}
+        {% else %}
+            Please Update this page
+        {% endif %}
+    </div>
+</div>
+{% if user.is_authenticated and user.is_superuser %}
+    <a href="{% url 'chemical:contact_update' %}" class="btn btn-primary"><i class="fas fa-edit"></i> Update This Page</a>
+    {% endif %}
+</div>
+{% endblock %}

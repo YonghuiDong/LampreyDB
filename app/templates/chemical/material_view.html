@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+{#    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>#}
+    <script src="{% static 'plotly/plotly-latest.min.js' %}"></script>
+    <style>
+    td{
+        line-break: anywhere;
+    }
+    </style>
+{% endblock %}
+
+{% load chemical_tags %}
+
+{% block content %}
+<div class="container">
+<h1 class="text-center text-truncate">{{ material.name }}</h1>
+<p class="text-center">
+    Create Date: <span class="text-info">{{ material.created }}</span> Modification Dates: <span class="text-info">{{ material.updated }}</span>
+</p>
+<div class="card border-info">
+    <div class="card-header">
+        <h4>Compound Information</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <th width="120">ID</th>
+                        <td>{{ material.code }}</td>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <td>{{ material.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Formula</th>
+                        <td>{{ material.formula }}</td>
+                    </tr>
+                    <tr>
+                        <th>RT (min)</th>
+                        <td>{{ material.rt }}</td>
+                    </tr>
+                    <tr>
+                        <th>m/z</th>
+                        <td>{{ material.mz }}</td>
+                    </tr>
+                    <tr>
+                        <th>Adduct Ion</th>
+                        <td>{{ material.adduct_ion }}</td>
+                    </tr>
+                    <tr>
+                        <th>Class</th>
+                        <td>{{ material.ms_level }}</td>
+                    </tr>
+                    <tr>
+                        <th>Smiles</th>
+                        <td>{{ material.smiles|default_if_none:'---' }}</td>
+                    </tr>
+                    <tr>
+                        <th>inChiKey</th>
+                        <td>{{ material.in_chi_key|default_if_none:'---' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Create Date</th>
+                        <td>{{ material.created }}</td>
+                    </tr>
+                    <tr>
+                        <th>Modification Dates</th>
+                        <td>{{ material.updated }}</td>
+                    </tr>
+                    <tr>
+                        <th>Note</th>
+                        <td>{{ material.note|default_if_none:'---' }}</td>
+                    </tr>
+                    {% if user.is_authenticated and user.is_superuser %}
+                    <tr>
+                        <th>Options</th>
+                        <td>
+                            <a href="{% url 'chemical:material_edit' material_id=material.id %}" class="btn btn-warning"><i class="fas fa-edit"></i> Edit</a>
+                            <button onclick="confirmDelete()" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                {% if material.smiles %}
+                <object type="image/svg+xml" data="{{ material.smiles_url }}?{{ 'now'|timestamp }}">
+                    Image of Smiles
+                </object>
+                <p class="text-center">
+                    <a href="{{ material.smiles_url }}?{{ 'now'|timestamp }}" class="btn btn-primary"><i class="fas fa-eye"></i> Open</a>
+                </p>
+                {% else %}
+                    <p class="text-center">Structure Not Available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div style="height: 20px"></div>
+<div class="card border-success">
+    <div class="card-header">
+        <h4>{{ plot_title }}</h4>
+    </div>
+    <div class="card-body">
+        {{ plot|safe }}
+    </div>
+</div>
+{#<div style="height: 20px"></div>#}
+{#<div class="card border-warning">#}
+{#    <div class="card-header">#}
+{#        <h4>MALDI Images</h4>#}
+{#    </div>#}
+{#    <div class="card-body">#}
+{#        <p>{{ material.maldi_note|default_if_none:'---' }}</p>#}
+{#        <div class="row">#}
+{#            {% if material.mg %}#}
+{#            <div class="col-md-4 text-center">#}
+{#                <img src="{{ material.mg.url }}" alt="" class="img-fluid">#}
+{#                <span>MG</span>#}
+{#            </div>#}
+{#            {% endif %}#}
+{#            {% if material.orange %}#}
+{#            <div class="col-md-4 text-center">#}
+{#                <img src="{{ material.orange.url }}" alt="" class="img-fluid">#}
+{#                <span>Orange</span>#}
+{#            </div>#}
+{#        {% endif %}#}
+{#            {% if material.mr %}#}
+{#            <div class="col-md-4 text-center">#}
+{#                <img src="{{ material.mr.url }}" alt="" class="img-fluid">#}
+{#                <span>MR</span>#}
+{#            </div>#}
+{#        {% endif %}#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+    <div style="height: 20px"></div>
+<div class="card border-danger">
+    <div class="card-header">
+        <h4>LC-MS Heatmap</h4>
+    </div>
+    <div class="card-body text-center">
+        {{ material.get_fish_map_html|safe }}
+    </div>
+</div>
+<div style="height: 20px"></div>
+</div>
+    
+<div id="deleteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalTitle">Confirm to delete</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <p class="text-center">
+                You are going to <span class="text-danger">Delete</span> <u class="text-danger">{{ material.name }}</u>, Please Confirm!
+            </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
+        <a type="button" class="btn btn-danger" href="{% url 'chemical:material_delete' material_id=material.id %}"><i class="fas fa-trash"></i> Delete</a>
+      </div>
+    </div>
+  </div>
+</div>    
+{% endblock %}
+
+
+{% block script %}
+    <script>
+    function confirmDelete() {
+        $('#deleteModal').modal('show');
+    }
+    </script>
+{% endblock %}

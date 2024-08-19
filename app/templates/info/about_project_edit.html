@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+{% block content %}
+<div class="container">
+<h1 class="text-center">Update About Project Content</h1>
+    <hr>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+        <button class="btn btn-primary">Submit</button>
+        {% endbuttons %}
+    </form>
+</div>
+{% endblock %}
+
+
+{% block script %}
+        <script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+        <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+        <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+    <script>
+    $('<br>').insertAfter('label[for="id_overview"]');
+    $('<br>').insertAfter('label[for="id_mtb"]');
+    {#$('<br>').insertAfter('label[for="id_lpd"]');#}
+    {#$('<br>').insertAfter('label[for="id_mal"]');#}
+    $('<br>').insertAfter('label[for="id_cite"]');
+    document.getElementById('id_mtb_attach').setAttribute('accept', 'application/pdf')
+    {#document.getElementById('id_lpd_attach').setAttribute('accept', 'application/pdf')#}
+    {#document.getElementById('id_mal_attach').setAttribute('accept', 'application/pdf')#}
+    </script>
+{% endblock %}

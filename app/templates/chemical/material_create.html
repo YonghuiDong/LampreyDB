@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'jquery-lined-textarea/css/jquery-linedtextarea.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container">
+<h1 class="text-center">{{ title }}</h1>
+    <hr>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.errors }}
+        {% bootstrap_field form.code %}
+        {% bootstrap_field form.name %}
+        {% bootstrap_field form.rt %}
+        {% bootstrap_field form.ion_mode %}
+        {% bootstrap_field form.mz %}
+        {% bootstrap_field form.adduct_ion %}
+        {% bootstrap_field form.formula %}
+        {% bootstrap_field form.ms_level %}
+        {% bootstrap_field form.smiles %}
+        {% bootstrap_field form.in_chi_key %}
+        {% bootstrap_field form.mz_int %}
+        {% bootstrap_field form.note %}
+{#        {% bootstrap_field form.mg %}#}
+{#        {% bootstrap_field form.orange %}#}
+{#        {% bootstrap_field form.mr %}#}
+{#        {% bootstrap_field form.maldi_note %}#}
+        <h4>Data for Fish Map</h4>
+        <p>Empty if no data, which means NaN</p>
+        <table class="table table-bordered table-responsive">
+            <thead>
+            <tr>
+                <th>Tissue</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><th>Eyes</th><td>{% bootstrap_field form.s0 show_label=False %}</td></tr>
+            <tr><th>Buccal Gland</th><td>{% bootstrap_field form.s1 show_label=False %}</td></tr>
+            <tr><th>Brain</th><td>{% bootstrap_field form.s2 show_label=False %}</td></tr>
+            <tr><th>Gills</th><td>{% bootstrap_field form.s3 show_label=False %}</td></tr>
+            <tr><th>Muscle</th><td>{% bootstrap_field form.s4 show_label=False %}</td></tr>
+            <tr><th>Heart</th><td>{% bootstrap_field form.s5 show_label=False %}</td></tr>
+            <tr><th>Liver</th><td>{% bootstrap_field form.s6 show_label=False %}</td></tr>
+            <tr><th>Blood</th><td>{% bootstrap_field form.s7 show_label=False %}</td></tr>
+            <tr><th>Supra Neural Body</th><td>{% bootstrap_field form.s8 show_label=False %}</td></tr>
+            <tr><th>Notochord</th><td>{% bootstrap_field form.s9 show_label=False %}</td></tr>
+            <tr><th>Kidney</th><td>{% bootstrap_field form.s10 show_label=False %}</td></tr>
+            <tr><th>Ovary</th><td>{% bootstrap_field form.s11 show_label=False %}</td></tr>
+            <tr><th>Intestine</th><td>{% bootstrap_field form.s12 show_label=False %}</td></tr>
+            <tr><th>Testis</th><td>{% bootstrap_field form.s13 show_label=False %}</td></tr>
+            </tbody>
+        </table>
+
+        {% buttons %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        {% endbuttons %}
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'jquery-lined-textarea/js/jquery-linedtextarea.js' %}" type="application/javascript"></script>
+    <script>
+    $('<br>Examples:<br>77.0388 247993.7344<br>' +
+        '91.0544 2403538.7500<br>' +
+        '93.0348 54585.5234<br>').insertAfter('label[for="id_mz_int"]');
+    // $('<br>Example:<br><span class="text-muted">20, 1000, 50, 23, 800, 42, 30, 1000, 47</span>').insertAfter('label[for="id_serials_data"]');
+    document.getElementById('id_mz_int').setAttribute('class', 'lined');
+    document.addEventListener('DOMContentLoaded', function () {
+         $(".lined").linedtextarea();
+    })
+
+    </script>
+{% endblock %}

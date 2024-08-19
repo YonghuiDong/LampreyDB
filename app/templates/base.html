@@ -1,0 +1,65 @@
+{% extends '_layout.html' %}
+{% load static %}
+
+
+{% block nav %}
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #3d5a80;">
+<div class="container-fluid">
+    <a class="navbar-brand" href="/"><i class="fas fa-atom"></i> <strong>MTDB</strong></a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor02">
+      <ul class="navbar-nav mr-auto">
+          <li class="nav-item"><a href="/" class="nav-link{% if request.path == '/' %} active{% endif %}"><strong>Home</strong></a></li>
+          <li class="nav-item"><a href="{% url 'chemical:material_list' %}" class="nav-link{% if request.path == '/material/list' %} active{% endif %}"><strong>List</strong></a></li>
+          <li class="nav-item{% if request.path == '/material/search' %} active{% endif %}"><a href="{% url 'chemical:material_search' %}" class="nav-link"><strong> MS/MS Search</strong></a></li>
+          <li class="nav-item"><a href="{% url 'chemical:about' %}" class="nav-link{% if request.path == '/about' %} active{% endif %}"><strong> About</strong></a></li>
+          <li class="nav-item"><a href="{% url 'chemical:contact' %}" class="nav-link{% if request.path == '/contact' %} active{% endif %}"><strong> Contact</strong></a></li>
+
+      </ul>
+
+      <ul class="navbar-nav">
+          {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-user" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               Welcome <i class="fas fa-user-alt"></i> {{ user.username }}</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown-user">
+                    {% if user.is_superuser %}<a class="dropdown-item" href="/admin"><i class="fas fa-user-shield"></i> Goto Admin</a>{% endif %}
+                    <a class="dropdown-item" href="{% url 'users:password_change' %}"><i class="fas fa-key"></i> Change Password</a>
+                    <a class="dropdown-item" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i> Quit System</a>
+                </div>
+            </li>
+
+              {% else %}
+              <li class="nav-item"><span class="navbar-text">Please</span></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+          {% endif %}
+      </ul>
+    </div>
+</div>
+     </nav>
+{% endblock nav %}
+
+{% block messages %}
+    {% load bootstrap4 %}
+    {% if messages %}
+    <div class="container">
+    {% bootstrap_messages %}
+    </div>
+    {% endif %}
+{% endblock messages %}
+
+{% block footer %}
+<footer class="footer text-danger">
+      <div class="container">
+          <div class="row">
+              <div class="col-md-6"><i class="fas fa-database"></i> MTDB</div>
+              <div class="col-md-6 d-none d-md-block d-lg-block"><span class="float-right ">AA Lab<i class="fa fa-fw fa-copyright"></i>2020</span></div>
+          </div>
+      </div>
+</footer>
+{% endblock footer %}
