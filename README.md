@@ -5,3 +5,10 @@ As one of the two most ancient groups of extant vertebrates, lamprey has become 
 <img src="https://github.com/YonghuiDong/LampreyDB/blob/main/Fig/Fig.jpg" align="center" alt="" width="700"/></center>
 
 Fig.1 Overview of LampreyDB spatial metabolomics database
+
+# Citation
+
+If you find LampreyDB helpful, please consider citing the our paperblush:
+
+- M. Gou, X. Duan, J. Li, Y. Wang, Q. Li, Y. Pang, and Y. Dong. (2023) Spatial Metabolomics Reveals the Multifaceted Nature of Lamprey Buccal Gland and Its Diverse Mechanisms for Blood-Feeding. [Link](https://www.nature.com/articles/s42003-023-05250-x)
+- M. Gou, X. Wang X. Duan, Y. Wang, Pang, and Y. Dong. (2024) LampreyDB: a spatial metabolomics dataset for lampreys
